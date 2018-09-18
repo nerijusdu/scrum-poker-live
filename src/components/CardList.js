@@ -3,25 +3,36 @@ import {ScrollView, StyleSheet} from 'react-native';
 import Card from './Card';
 
 export default class CardList extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      selected: null
+    };
+  }
+
   render() {
+    const values = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?', 'Coffee'];
+    const allCards = values.map(val => (
+      <Card
+        value={val}
+        key={val}
+        onPress={() => this.setState({ selected: val })}
+      />
+    ));
     return (
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[styles.container, this.state.selected !== null ? styles.selectedCard : {}]}
         style={{ height: '100%', width: '100%'}}
       >
-        <Card value={0}/>
-        <Card value={0.5}/>
-        <Card value={1}/>
-        <Card value={2}/>
-        <Card value={3}/>
-        <Card value={5}/>
-        <Card value={8}/>
-        <Card value={13}/>
-        <Card value={20}/>
-        <Card value={40}/>
-        <Card value={100}/>
-        <Card value={'?'}/>
-        <Card value={'Coffee'}/>
+        {this.state.selected === null ?
+          allCards :
+          <Card
+            value={this.state.selected}
+            onPress={() => this.setState({ selected: null })}
+            fullScreen
+          />
+        }
       </ScrollView>
     );
   }
@@ -33,5 +44,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     backgroundColor: '#FFFFFF'
+  },
+  selectedCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%'
   }
 });
