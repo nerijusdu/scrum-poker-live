@@ -59,3 +59,4 @@ buck-out/
 api/.vs/
 api/Api/bin/
 api/Api/obj/
+*.user
