@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingLeft: '2%',
+    paddingRight: '2%'
   },
   selectedCard: {
     alignItems: 'center',

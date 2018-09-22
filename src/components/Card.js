@@ -19,7 +19,7 @@ export default class Card extends React.Component {
       >
         <Animated.View
           style={[styles.card, {
-            width: fullScreen ? 300 : 100,
+            width: fullScreen ? 300 : '30%',
             height: fullScreen ? 300 : 100,
             transform: [{ rotateY }]
           }]}
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 10
+    margin: '1%'
   },
   cardText: {
     color: '#FFFFFF',
