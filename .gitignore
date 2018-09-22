@@ -56,3 +56,6 @@ buck-out/
 *.jsbundle
 
 .vscode/
+api/.vs/
+api/Api/bin/
+api/Api/obj/
