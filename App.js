@@ -1,18 +1,8 @@
-import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
+import { createDrawerNavigator } from 'react-navigation';
 import CardList from './src/components/CardList';
+import Login from './src/components/Login';
 
-export default class App extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <CardList />
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-  }
+export default createDrawerNavigator({
+  Login,
+  Home: CardList,
 });
