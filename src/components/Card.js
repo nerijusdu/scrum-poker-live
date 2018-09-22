@@ -1,17 +1,21 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, Animated} from 'react-native';
+import {StyleSheet, Text, TouchableNativeFeedback, Animated} from 'react-native';
 
 export default class Card extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      isHidden: !!props.isHidden
+    };
   }
 
   render() {
-    const { fullScreen } = this.props;
+    const { fullScreen, value, onPress } = this.props;
     const rotateY = fullScreen ? '180deg' : '0deg';
     return (
-      <TouchableOpacity
-        onPress={this.props.onPress}
+      <TouchableNativeFeedback
+        onPress={() => this.state.isHidden ? this.setState({ isHidden: false }) : onPress()}
       >
         <Animated.View
           style={[styles.card, {
@@ -23,10 +27,10 @@ export default class Card extends React.Component {
           <Text style={[styles.cardText, {
             fontSize: fullScreen ? 100 : 25
           }]}>
-            {this.props.value}
+            {this.state.isHidden ? null : value}
           </Text>
         </Animated.View>
-      </TouchableOpacity>
+      </TouchableNativeFeedback>
     );
   }
 }

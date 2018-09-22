@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet, View, Animated} from 'react-native';
+import {StyleSheet, View, Animated} from 'react-native';
 import Card from './Card';
 
 export default class CardList extends React.Component {
@@ -59,6 +59,7 @@ export default class CardList extends React.Component {
             value={selected}
             onPress={() => this.selectCard(null)}
             fullScreen
+            isHidden
           /> :
           null
         }
