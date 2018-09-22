@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, View, Animated} from 'react-native';
 import Card from './Card';
 
 export default class CardList extends React.Component {
@@ -7,8 +7,28 @@ export default class CardList extends React.Component {
     super();
 
     this.state = {
-      selected: null
+      selected: null,
+      spinValue: new Animated.Value(0)
     };
+  }
+
+  selectCard = (selected) => {
+    Animated.timing(
+      this.state.spinValue,
+      {
+        toValue: 90,
+        duration: 1000
+      }
+    ).start(() => {
+      this.setState({ selected });
+      Animated.timing(
+        this.state.spinValue,
+        {
+          toValue: selected ? 180 : 0,
+          duration: 1000
+        }
+      ).start();
+    });
   }
 
   render() {
@@ -17,33 +37,43 @@ export default class CardList extends React.Component {
       <Card
         value={val}
         key={val}
-        onPress={() => this.setState({ selected: val })}
+        onPress={() => this.selectCard(val)}
       />
     ));
+    const { selected } = this.state;
+    const interpolateValue = {
+      inputRange: [0, 180],
+      outputRange: ['0deg', '180deg']
+    };
+    const spin = this.state.spinValue.interpolate(interpolateValue);
     return (
-      <ScrollView
-        contentContainerStyle={[styles.container, this.state.selected !== null ? styles.selectedCard : {}]}
-        style={{ height: '100%', width: '100%'}}
+      <Animated.ScrollView
+        contentContainerStyle={[styles.container, selected !== null ? styles.selectedCard : {}]}
+        style={{ height: '100%', width: '100%', transform: [{ rotateY: spin }]}}
       >
-        {this.state.selected === null ?
-          allCards :
+        <View style={[styles.container, { display: selected === null ? 'flex' : 'none'}]}>
+          {allCards}
+        </View>
+        {selected ?
           <Card
-            value={this.state.selected}
-            onPress={() => this.setState({ selected: null })}
+            value={selected}
+            onPress={() => this.selectCard(null)}
             fullScreen
-          />
+          /> :
+          null
         }
-      </ScrollView>
+      </Animated.ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    height: '100%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#FFFFFF'
   },
   selectedCard: {
     alignItems: 'center',

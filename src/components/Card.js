@@ -1,16 +1,31 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, Animated} from 'react-native';
 
 export default class Card extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
+    const { fullScreen } = this.props;
+    const rotateY = fullScreen ? '180deg' : '0deg';
     return (
       <TouchableOpacity
-        style={[styles.card, this.props.fullScreen ? styles.fullScreen : styles.small]}
         onPress={this.props.onPress}
+      >
+        <Animated.View
+          style={[styles.card, {
+            width: fullScreen ? 300 : 100,
+            height: fullScreen ? 300 : 100,
+            transform: [{ rotateY }]
+          }]}
         >
-        <Text style={{ color: '#FFFFFF'}}>
-          {this.props.value}
-        </Text>
+          <Text style={[styles.cardText, {
+            fontSize: fullScreen ? 100 : 25
+          }]}>
+            {this.props.value}
+          </Text>
+        </Animated.View>
       </TouchableOpacity>
     );
   }
@@ -25,12 +40,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10
   },
-  fullScreen: {
-    width: 300,
-    height: 300,
-  },
-  small: {
-    width: 100,
-    height: 100
+  cardText: {
+    color: '#FFFFFF',
+    fontWeight: '900',
+    width: '100%',
+    textAlign: 'center'
   }
 });
