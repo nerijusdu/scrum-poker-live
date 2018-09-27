@@ -27,12 +27,16 @@ class Login extends React.Component {
     })
       .then(res => {
         if (res) {
-          console.warn(res.data.token);
+          this.props.saveUser(res.data.token, res.data.name);
+          this.props.navigation.navigate('Home');
         }
       });
   }
 
   render() {
+    if (this.props.user.token) {
+      this.props.navigation.navigate('Home');
+    }
     return (
       <View style={styles.container}>
         <Text>Login</Text>
@@ -77,7 +81,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  error: state.app.error
+  error: state.app.error,
+  user: state.app.user
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(appActions, dispatch);
