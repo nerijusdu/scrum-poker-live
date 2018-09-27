@@ -1,9 +1,12 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {StyleSheet, Text, View, Button} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
+import * as appActions from '../store/actions/AppActions';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   static navigationOptions = {
     drawerLabel: 'Login'
   };
@@ -72,3 +75,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+
+const mapStateToProps = (state) => ({
+  error: state.app.error
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators(appActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
