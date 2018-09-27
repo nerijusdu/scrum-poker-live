@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-export default class UserSpace extends React.Component {
+class Rooms extends React.Component {
   render() {
     return (
       <View>
@@ -10,3 +10,5 @@ export default class UserSpace extends React.Component {
     );
   }
 }
+
+export default Rooms;
