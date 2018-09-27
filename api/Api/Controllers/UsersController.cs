@@ -7,6 +7,7 @@ using Api.Entities;
 using Api.Helpers;
 using Api.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,7 @@ namespace Api.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("AllowAllOrigins")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -25,6 +27,13 @@ namespace Api.Controllers
         {
             _userService = userService;
             _appSettings = appSettings.Value;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public JsonResult Test()
+        {
+            return new JsonResult(new User{Email = "some@email.com"});
         }
 
         [AllowAnonymous]

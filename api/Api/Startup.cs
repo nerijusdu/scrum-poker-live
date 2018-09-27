@@ -30,6 +30,14 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("AllowAllOrigins", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }));
+
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -68,13 +76,13 @@ namespace Api
                     };
                 });
 
-            var connection = @"Server=localhost;Port=5432;Database=ScrumPokerLive;Username=spl_user;Password=ynYDTI2v";
+            var connection = Configuration.GetConnectionString("defaultConnection");
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connection));
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
-
+            
             services.AddMvc(config =>
                 {
                     var policy = new AuthorizationPolicyBuilder()
@@ -99,7 +107,7 @@ namespace Api
             {
                 app.UseHsts();
             }
-
+            app.UseDeveloperExceptionPage();
             app.UseAuthentication();
             app.UseMvc();
         }

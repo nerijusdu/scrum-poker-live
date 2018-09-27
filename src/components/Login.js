@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View, Button} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
+import apiService from '../services/apiService';
 
 export default class Login extends React.Component {
   static navigationOptions = {
@@ -17,7 +18,15 @@ export default class Login extends React.Component {
   }
 
   login = () => {
-    console.warn('Logging in', this.state.email, this.state.password);
+    apiService.login({
+      Email: this.state.email,
+      Password: this.state.password
+    })
+      .then(res => {
+        if (res) {
+          console.warn(res.data.token);
+        }
+      });
   }
 
   render() {
@@ -28,6 +37,7 @@ export default class Login extends React.Component {
           label="Email"
           textContentType="emailAddress"
           keyboardType="email-address"
+          autoCapitalize="none"
           returnKeyType="next"
           onSubmitEditing={() => this.passwordInput.focus()}
           blurOnSubmit={false}
