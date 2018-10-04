@@ -9,5 +9,11 @@ export default {
   },
   getRooms() {
     return apiCall('/rooms');
+  },
+  createRoom(room) {
+    return apiCall('/rooms', {
+      method: 'POST',
+      body: JSON.stringify(room)
+    });
   }
 };
