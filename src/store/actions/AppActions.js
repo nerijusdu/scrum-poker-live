@@ -8,3 +8,8 @@ export const saveUser = (token, name) => ({
   token,
   name
 });
+
+export const toggleLoading = (isLoading) => ({
+  type: 'TOGGLE_LOADING',
+  isLoading
+});

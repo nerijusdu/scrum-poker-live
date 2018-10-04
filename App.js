@@ -1,11 +1,21 @@
 import React from 'react';
 import { createDrawerNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
+import { AsyncStorage } from 'react-native';
 import CardList from './src/components/CardList';
 import Login from './src/components/Login';
 import Rooms from './src/components/Rooms';
 import store from './src/store';
 import DrawerContainer from './src/components/DrawerContainer';
+import { saveUser, toggleLoading } from './src/store/actions/AppActions';
+
+AsyncStorage.getItem("UserToken")
+  .then(token => {
+    if (token) {
+      store.dispatch(saveUser(token, ''));
+    }
+  })
+  .finally(() => store.dispatch(toggleLoading(false)));
 
 const App = createDrawerNavigator({
   Home: CardList,

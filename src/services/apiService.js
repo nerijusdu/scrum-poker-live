@@ -6,5 +6,8 @@ export default {
       method: 'POST',
       body: JSON.stringify(user)
     });
+  },
+  getRooms() {
+    return apiCall('/rooms');
   }
 };

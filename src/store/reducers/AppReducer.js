@@ -3,7 +3,8 @@ const initialState = {
     token: null,
     name: ''
   },
-  error: ''
+  error: '',
+  loading: true
 };
 
 const app = (state = initialState, action) => {
@@ -20,6 +21,11 @@ const app = (state = initialState, action) => {
       return {
         ...state,
         error: action.error
+      };
+    case 'TOGGLE_LOADING':
+      return {
+        ...state,
+        loading: action.isLoading
       };
     default:
       return state

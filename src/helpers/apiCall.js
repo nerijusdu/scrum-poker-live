@@ -1,4 +1,7 @@
+import { AsyncStorage } from 'react-native';
 import { apiUrl } from '../config';
+import store from '../store';
+import { saveUser, toggleLoading } from '../store/actions/AppActions';
 
 export class ApiCall {
   defaultHeaders = new Headers({
@@ -11,7 +14,7 @@ export class ApiCall {
     const headers = requestSettings.headers || this.defaultHeaders;
 
     if (!options.ignoreLoading) {
-      // this.store.commit('app/mToggleLoading', true);
+      store.dispatch(toggleLoading(true));
     }
 
     this.appendToken(headers);
@@ -20,6 +23,10 @@ export class ApiCall {
       ...requestSettings,
       headers
     })
+      .then(x => {
+        console.log(x);
+        return x;
+      })
       .then(this.parseResponse)
       .then(this.handleErrors)
       .catch((err) => {
@@ -29,7 +36,7 @@ export class ApiCall {
       })
       .finally(res => {
         if (!options.ignoreLoading) {
-          // this.store.commit('app/mToggleLoading', false);
+          store.dispatch(toggleLoading(false));
         }
 
         return res;
@@ -37,13 +44,13 @@ export class ApiCall {
   }
 
   appendToken = (headers) => {
-    const token = null; // AsyncStorage.getItem('token'); // this.store.getters['app/getToken'];
+    const token = store.getState().app.user.token;
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
   }
 
-  parseResponse = res => res.json()
+  parseResponse = res => res.status === 401 ? res.blob() : res.json()
     .then(data => ({
       status: res.status,
       ok: res.ok,
@@ -52,8 +59,12 @@ export class ApiCall {
 
   handleErrors = (res) => {
     if (!res.ok) {
+      if (res.status === 401) {
+        AsyncStorage.removeItem("UserToken");
+        store.dispatch(saveUser(null, ''));
+      }
       // this.store.dispatch('app/showError', res.data.message);
-      console.warn(res.data.message)
+      console.warn(res);
       return null;
     }
     return res;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {StyleSheet, Text, View, Button} from 'react-native';
+import {StyleSheet, Text, View, Button, AsyncStorage} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
 import * as appActions from '../store/actions/AppActions';
@@ -27,6 +27,7 @@ class Login extends React.Component {
     })
       .then(res => {
         if (res) {
+          AsyncStorage.setItem("UserToken", res.data.token);
           this.props.saveUser(res.data.token, res.data.name);
           this.props.navigation.navigate('Home');
         }

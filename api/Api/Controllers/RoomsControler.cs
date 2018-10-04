@@ -20,7 +20,6 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult GetRooms()
         {
             var rooms = _roomService.GetRooms();
