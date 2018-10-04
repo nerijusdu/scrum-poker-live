@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Api
 {
@@ -90,10 +91,10 @@ namespace Api
                         .Build();
                     config.Filters.Add(new AuthorizeFilter(policy));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(x => x.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
-            // Register services
-            services.AddScoped<IUserService, UserService>();
+            ServiceFactory.RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

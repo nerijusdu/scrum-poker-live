@@ -49,7 +49,7 @@ namespace Api.Controllers
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, user.Id.ToString())
                 }),
@@ -62,9 +62,9 @@ namespace Api.Controllers
             
             return Ok(new
             {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
+                user.Id,
+                user.Email,
+                user.Name,
                 Token = tokenString
             });
         }
