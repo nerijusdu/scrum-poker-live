@@ -1,0 +1,28 @@
+﻿@page
+@{
+}
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script>
+    
+    var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/rooms").build();
+
+    connection.on("ReceiveMessage", function (user, message) {
+        var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        var encodedMsg = user + " says " + msg;
+        var li = document.createElement("li");
+        li.textContent = encodedMsg;
+        document.getElementById("messagesList").appendChild(li);
+    });
+
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    function subscribe() {
+        connection.invoke("Subscribe", 123).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+</script>
+
+<button onclick="subscribe()">Subscribe</button>

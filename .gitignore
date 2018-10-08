@@ -60,3 +60,4 @@ api/.vs/
 api/Api/bin/
 api/Api/obj/
 *.user
+api/Api/wwwroot/lib/

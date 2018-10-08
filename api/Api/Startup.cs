@@ -1,7 +1,9 @@
-﻿using System.Text;
+﻿using System.Net.Http.Formatting;
+using System.Text;
 using System.Threading.Tasks;
 using Api.Entities;
 using Api.Helpers;
+using Api.Hubs;
 using Api.Services;
 using Api.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Api
 {
@@ -92,7 +95,13 @@ namespace Api
                     config.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(x => x.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
+                .AddJsonOptions(x =>
+                {
+                    x.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
+            services.AddSignalR(options => options.EnableDetailedErrors = true);
 
             ServiceFactory.RegisterServices(services);
         }
@@ -100,6 +109,7 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors("AllowAllOrigins");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -110,6 +120,11 @@ namespace Api
             }
             app.UseDeveloperExceptionPage();
             app.UseAuthentication();
+
+            app.UseWebSockets();
+            app.UseSignalR(options => options.MapHub<RoomHub>("/hubs/rooms"));
+            
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
