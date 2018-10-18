@@ -1,1 +1,1 @@
-export const apiUrl = 'http://splapi.azurewebsites.net';
+export const apiUrl = 'http://192.168.0.103:8080';

@@ -1,0 +1,20 @@
+version: '2.2'
+services:
+  api:
+    container_name: spl-api
+    restart: always
+    build: .
+    ports:
+      - '8080:80'
+    links:
+      - postgres
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: ynYDTI2v
+      POSTGRES_USER: spl_user
+      PGDATA: /var/lib/postgresql/mydata
+      POSTGRES_DB: ScrumPokerLive
+    ports:
+      - '5432:5432'
