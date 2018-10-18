@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3'
 services:
   api:
     container_name: spl-api
@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ynYDTI2v
       POSTGRES_USER: spl_user
-      PGDATA: /var/lib/postgresql/mydata
+      PGDATA: /var/lib/postgresql/mydata #needed because of some weird permissions error
       POSTGRES_DB: ScrumPokerLive
     ports:
-      - '5432:5432'
+      - '5433:5432' #5433 to not block postgres port if you have it setup localy
