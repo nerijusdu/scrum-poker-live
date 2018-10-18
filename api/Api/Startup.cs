@@ -109,6 +109,8 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            UpdateDatabase(app);
+
             app.UseCors("AllowAllOrigins");
             if (env.IsDevelopment())
             {
@@ -126,6 +128,24 @@ namespace Api
             
             app.UseStaticFiles();
             app.UseMvc();
+        }
+
+        private void UpdateDatabase(IApplicationBuilder app)
+        {
+            if (Configuration.GetSection("RunMigrationsOnStart").Value.ToLower() != "true")
+            {
+                return;
+            }
+
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<AppDbContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }
