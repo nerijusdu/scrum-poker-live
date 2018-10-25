@@ -9,5 +9,7 @@ namespace Api.Services.Contracts
         RoomDto CreateRoom(RoomDto room);
         RoomDto GetById(int id);
         void DeleteRoom(int id);
+        void ConnectToRoom(int userId, int roomId, string password = null);
+        void DisconnectFromRoom(int userId, int roomId = 0);
     }
 }

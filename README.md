@@ -2,7 +2,11 @@
 ### Prerequisites
 - Setup [React-Native](https://facebook.github.io/react-native/docs/getting-started.html)
 - Install [Docker](https://www.docker.com/get-started)
+- Install [.NET Core SDK](https://www.microsoft.com/net/download)
+- Install [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+    - Create ```ScrumPokerLive``` database.
 ### Setting up API
+If this is your first time running api, set ```"RunMigrationsOnStart": true``` in appsettings to run migrations in the database.
 If testing on android device, run api in Docker:
 ```
 $ cd api/Api

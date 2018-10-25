@@ -3,26 +3,45 @@
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
-    
-    var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/rooms").build();
+    var roomId = 1;
+    var connection;
+    function connect() {
+        var token = document.querySelector("#token").value;
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/rooms", { accessTokenFactory: () => token })
+            .build();
 
-    connection.on("ReceiveMessage", function (user, message) {
-        var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var encodedMsg = user + " says " + msg;
-        var li = document.createElement("li");
-        li.textContent = encodedMsg;
-        document.getElementById("messagesList").appendChild(li);
-    });
-
-    connection.start().catch(function (err) {
-        return console.error(err.toString());
-    });
-
-    function subscribe() {
-        connection.invoke("Subscribe", 123).catch(function (err) {
-            return console.error(err.toString());
+        connection.on("OnConnected", (success, message) => {
+            console.log(success, message);
         });
+
+        connection.on("UpdateUserList", (users) => {
+            console.log(users);
+        });
+
+        connection.start().catch(function(err) {
+            return console.log(err.toString());
+        });
+    }
+    
+    function subscribe() {
+        connection
+            .invoke("Subscribe", roomId, "pass")
+            .catch(function(err) {
+                return console.log(err.toString());
+            });
+    }
+    function unsubscribe() {
+        connection
+            .invoke("Unsubscribe", roomId)
+            .catch(function (err) {
+                return console.log(err.toString());
+            });
     }
 </script>
 
-<button onclick="subscribe()">Subscribe</button>
+<span>Token:</span>
+<input id="token" value=""/>
+<button onclick="connect()">Connect</button><br/>
+<button onclick="subscribe()">Subscribe</button><br />
+<button onclick="unsubscribe()">Unsubscribe</button>
