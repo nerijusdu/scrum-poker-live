@@ -22,6 +22,12 @@ namespace Api.Hubs
             return Clients.Client(Context.ConnectionId).SetConnectionId(Context.ConnectionId);
         }
 
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            roomService.DisconnectFromRoom(UserId);
+            return base.OnDisconnectedAsync(exception);
+        }
+        // TODO: maybe store ConnectionId in database
         public Task Subscribe(int roomId, string password = null)
         {
             try
@@ -37,6 +43,9 @@ namespace Api.Hubs
             }
 
             UpdateUsers(roomId);
+
+            var estimates = roomService.GetEstimates(roomId, true);
+            Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
             return Task.CompletedTask;
         }
 
@@ -47,12 +56,31 @@ namespace Api.Hubs
             return Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId.ToString());
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public Task AddEstimate(int roomId, string estimate)
         {
-            roomService.DisconnectFromRoom(UserId);
-            return base.OnDisconnectedAsync(exception);
+            if (!roomService.ContainsUser(roomId, UserId))
+            {
+                return Task.CompletedTask;
+            }
+
+            var estimates = roomService.ChangeEstimate(roomId, UserId, estimate);
+            Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
+            return Task.CompletedTask;
         }
 
+        public Task ShowEstimates(int roomId)
+        {
+            var room = roomService.GetById(roomId);
+            if (room.Master.Id != UserId)
+            {
+                return Task.CompletedTask;
+            }
+
+            var estimates = roomService.GetEstimates(roomId);
+            Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
+            return Task.CompletedTask;
+        }
+        
         private void UpdateUsers(int roomId)
         {
             var room = roomService.GetById(roomId);
@@ -68,7 +96,8 @@ namespace Api.Hubs
     public interface IRoomBroadcaster : IBroadcaster
     {
         Task OnConnected(bool success, string message = null);
-        Task UpdateUserList(IList<UserDto> users);
         Task Disconnect();
+        Task UpdateUserList(IList<UserDto> users);
+        Task UpdateEstimates(IList<EstimateDto> estimates);
     }
 }

@@ -132,5 +132,45 @@ namespace Api.Services
 
             _context.SaveChanges();
         }
+
+        public bool ContainsUser(int roomId, int userId)
+        {
+            return _context.Rooms
+                .Include(x => x.Users)
+                .Any(x => x.Id == roomId && x.Users.Exists(u => u.UserId == userId));
+        }
+
+        public List<EstimateDto> GetEstimates(int roomId, bool hidden = false)
+        {
+            return _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId)?
+                .Users
+                .Select(x => new EstimateDto
+                {
+                    UserId = x.UserId,
+                    Estimate = hidden ? x.Estimate : null
+                })
+                .ToList();
+        }
+
+        public List<EstimateDto> ChangeEstimate(int roomId, int userId, string estimate)
+        {
+            var roomUser = _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId)?
+                .Users
+                .FirstOrDefault(x => x.UserId == userId);
+
+            if (roomUser == null)
+            {
+                return null;
+            }
+
+            roomUser.Estimate = estimate;
+            _context.SaveChanges();
+
+            return GetEstimates(roomId, true);
+        }
     }
 }
