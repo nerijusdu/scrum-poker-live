@@ -3,7 +3,7 @@
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
-    var roomId = 1;
+    var roomId = 2;
     var connection;
     function connect() {
         var token = document.querySelector("#token").value;
@@ -18,8 +18,12 @@
         connection.on("UpdateUserList", (users) => {
             console.log(users);
         });
+        
+        connection.on("Disconnect", () => {
+            connection.stop();
+        });
 
-        connection.start().catch(function(err) {
+        connection.start().catch((err) => {
             return console.log(err.toString());
         });
     }
@@ -34,7 +38,10 @@
     function unsubscribe() {
         connection
             .invoke("Unsubscribe", roomId)
-            .catch(function (err) {
+            .then(() => {
+                connection.stop();
+            })
+            .catch((err) => {
                 return console.log(err.toString());
             });
     }

@@ -19,6 +19,10 @@ namespace Api.Dtos
 
         public RoomDto(Room room, bool includeUsers = false, bool includePass = false)
         {
+            if (room == null)
+            {
+                return;
+            }
             Id = room.Id;
             Name = room.Name;
             Master = new UserDto(room.Master);

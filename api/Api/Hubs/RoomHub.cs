@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using Api.Dtos;
 using Api.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 
 namespace Api.Hubs
 {
     [Authorize]
-    [EnableCors("AllowAllOrigins")]
     public class RoomHub : HubBase<IRoomBroadcaster>
     {
         private readonly IRoomService roomService;
@@ -38,16 +36,14 @@ namespace Api.Hubs
                 return Task.CompletedTask;
             }
 
-            var room = roomService.GetById(roomId);
-            Clients.Group(roomId.ToString()).UpdateUserList(room.Users);
+            UpdateUsers(roomId);
             return Task.CompletedTask;
         }
 
         public Task Unsubscribe(int roomId)
         {
             roomService.DisconnectFromRoom(UserId, roomId);
-            var room = roomService.GetById(roomId);
-            Clients.Group(roomId.ToString()).UpdateUserList(room.Users);
+            UpdateUsers(roomId);
             return Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId.ToString());
         }
 
@@ -56,11 +52,23 @@ namespace Api.Hubs
             roomService.DisconnectFromRoom(UserId);
             return base.OnDisconnectedAsync(exception);
         }
+
+        private void UpdateUsers(int roomId)
+        {
+            var room = roomService.GetById(roomId);
+            if (room.Id == 0)
+            {
+                Clients.Group(roomId.ToString()).Disconnect();
+                return;
+            }
+            Clients.Group(roomId.ToString()).UpdateUserList(room.Users);
+        }
     }
 
     public interface IRoomBroadcaster : IBroadcaster
     {
         Task OnConnected(bool success, string message = null);
         Task UpdateUserList(IList<UserDto> users);
+        Task Disconnect();
     }
 }

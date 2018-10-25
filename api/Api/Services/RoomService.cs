@@ -119,7 +119,17 @@ namespace Api.Services
 
                 user.Rooms.Remove(roomUser);
             }
-            
+
+            // remove room if master left
+            var roomsToRemove = _context.Rooms
+                .Where(x => x.Users.All(y => y.UserId != x.Master.Id))
+                .ToList();
+
+            if (roomsToRemove.Any())
+            {
+                _context.RemoveRange(roomsToRemove);
+            }
+
             _context.SaveChanges();
         }
     }
