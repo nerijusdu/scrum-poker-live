@@ -15,5 +15,5 @@ Change `apiUrl` in `src/config.js` to your local ip address for example `http://
 ```
 $ adb devices
 $ adb reverse tcp:8080 tcp:8080
-$ react-native run-android
+$ npm start
 ```

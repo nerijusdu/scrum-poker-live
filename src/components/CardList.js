@@ -36,7 +36,7 @@ export default class CardList extends React.Component {
   }
 
   render() {
-    const values = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?', 'Coffee'];
+    const values = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?'/*, 'Coffee'*/];
     const allCards = values.map(val => (
       <Card
         value={val}

@@ -4,13 +4,13 @@ import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Mod
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
 
-class Rooms extends React.Component {
+class RoomList extends React.Component {
   constructor(props){
     super(props);
-
+    
     this.state = {
       isLoaded: false,
-      rooms: [],
+      rooms: [{ id: 1, name: 'Test room'}],
       isCreateModalOpen: false,
       isPasswordModalOpen: false,
       selectedRoomId: null
@@ -34,12 +34,12 @@ class Rooms extends React.Component {
 
   componentWillUpdate(nextProps) {
     if (!this.state.isLoaded && !this.props.user.token && nextProps.user.token) {
-      this.loadRooms();
+      // this.loadRooms();
     }
   }
 
   enterRoom = (id, pass) => {
-
+    this.props.navigation.navigate('Room', this.state.rooms.find(x => x.id === id));
   }
 
   render() {
@@ -64,7 +64,7 @@ class Rooms extends React.Component {
           locked={x.isLocked}
           onPress={x.isLocked
             ? () => this.setState({ isPasswordModalOpen: true, selectedRoomId: x.id })
-            : this.enterRoom(x.id)
+            : () => this.enterRoom(x.id)
           }
         />)}
         <View style={styles.createRoomButton}>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   createRoomButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     left: 10,
     right: 10
   },
@@ -238,4 +238,4 @@ const mapStateToProps = (state) => ({
   user: state.app.user
 });
 
-export default connect(mapStateToProps)(Rooms);
+export default connect(mapStateToProps)(RoomList);

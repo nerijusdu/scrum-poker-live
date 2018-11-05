@@ -4,7 +4,12 @@ import {bindActionCreators} from 'redux';
 import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import * as appActions from '../store/actions/AppActions';
 
-const authRoutes = ['Rooms'];
+const authRoutes = [
+  'Rooms'
+];
+const hiddenRoutes = [
+  'Room'
+];
 
 class DrawerContainer extends React.Component {
 
@@ -15,7 +20,9 @@ class DrawerContainer extends React.Component {
       <View style={styles.container}>
         {navigation.state.routes.map(route => {
           const requiresLogin = authRoutes.includes(route.key);
-          const shouldDisplay = route.key === 'Login' ? !isLoggedIn : !requiresLogin || isLoggedIn;
+          const hidden = hiddenRoutes.includes(route.key);
+          let shouldDisplay = route.key === 'Login' ? !isLoggedIn : !requiresLogin || isLoggedIn;
+          shouldDisplay = hidden ? false : shouldDisplay;
           return (
             <Text
               onPress={() => navigation.navigate(route.key)}
