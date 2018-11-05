@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Api.Dtos;
 using Api.Entities;
@@ -63,6 +64,113 @@ namespace Api.Services
             var room = _context.Rooms.Find(id);
             _context.Remove(room);
             _context.SaveChanges();
+        }
+
+        public void ConnectToRoom(int userId, int roomId, string password = null)
+        {
+            var room = _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId);
+
+            if (room == null)
+            {
+                throw new Exception("Room doesn't exist");
+            }
+
+            if (!string.IsNullOrEmpty(room.Password) && room.Password != password)
+            {
+                throw new Exception("Password is incorrect");
+            }
+
+            if (room.Users.FirstOrDefault(x => x.UserId == userId) != null)
+            {
+                return;
+            }
+
+            var user = _userService.GetById(userId);
+
+            room.Users.Add(new RoomUser
+            {
+                Room = room,
+                User = user
+            });
+
+            _context.SaveChanges();
+        }
+
+        public void DisconnectFromRoom(int userId, int roomId = 0)
+        {
+            var user = _context.Users
+                .Include(x => x.Rooms)
+                .FirstOrDefault(x => x.Id == userId);
+
+            if (roomId == 0)
+            {
+                user?.Rooms.RemoveAll(x => x.UserId == userId);
+            }
+            else
+            {
+                var roomUser = user?.Rooms.FirstOrDefault(x => x.UserId == userId);
+
+                if (roomUser == null)
+                {
+                    return;
+                }
+
+                user.Rooms.Remove(roomUser);
+            }
+
+            // remove room if master left
+            var roomsToRemove = _context.Rooms
+                .Where(x => x.Users.All(y => y.UserId != x.Master.Id))
+                .ToList();
+
+            if (roomsToRemove.Any())
+            {
+                _context.RemoveRange(roomsToRemove);
+            }
+
+            _context.SaveChanges();
+        }
+
+        public bool ContainsUser(int roomId, int userId)
+        {
+            return _context.Rooms
+                .Include(x => x.Users)
+                .Any(x => x.Id == roomId && x.Users.Exists(u => u.UserId == userId));
+        }
+
+        public List<EstimateDto> GetEstimates(int roomId, bool hidden = false)
+        {
+            return _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId)?
+                .Users
+                .Select(x => new EstimateDto
+                {
+                    UserId = x.UserId,
+                    Estimate = hidden ? x.Estimate : null
+                })
+                .ToList();
+        }
+
+        public List<EstimateDto> ChangeEstimate(int roomId, int userId, string estimate)
+        {
+            var roomUser = _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId)?
+                .Users
+                .FirstOrDefault(x => x.UserId == userId);
+
+            if (roomUser == null)
+            {
+                return null;
+            }
+
+            roomUser.Estimate = estimate;
+            _context.SaveChanges();
+
+            return GetEstimates(roomId, true);
         }
     }
 }

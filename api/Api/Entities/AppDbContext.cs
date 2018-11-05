@@ -21,7 +21,7 @@ namespace Api.Entities
 
             modelBuilder.Entity<RoomUser>()
                 .HasOne(x => x.User)
-                .WithMany()
+                .WithMany(x => x.Rooms)
                 .HasForeignKey(x => x.UserId);
         }
     }

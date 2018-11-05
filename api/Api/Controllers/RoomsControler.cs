@@ -1,7 +1,6 @@
 ﻿using Api.Dtos;
 using Api.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -9,7 +8,6 @@ namespace Api.Controllers
     [Authorize]
     [ApiController]
     [Route("rooms")]
-    [EnableCors("AllowAllOrigins")]
     public class RoomsControler : ExtendedControllerBase
     {
         private readonly IRoomService _roomService;
