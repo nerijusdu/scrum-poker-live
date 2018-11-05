@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, View, Animated} from 'react-native';
+import {StyleSheet, View, Animated, Text} from 'react-native';
 import Card from './Card';
+import showIf from '../helpers/showIf';
 
 export default class CardList extends React.Component {
   static navigationOptions = {
@@ -55,7 +56,10 @@ export default class CardList extends React.Component {
         contentContainerStyle={[styles.container, selected !== null ? styles.selectedCard : {}]}
         style={{ height: '100%', width: '100%', transform: [{ rotateY: spin }]}}
       >
-        <View style={[styles.container, { display: selected === null ? 'flex' : 'none'}]}>
+        <View style={[styles.title, showIf(selected === null)]}>
+          <Text style={styles.titleText}>Select a card:</Text>
+        </View>
+        <View style={[styles.container, showIf(selected === null)]}>
           {allCards}
         </View>
         {selected ?
@@ -79,12 +83,22 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingLeft: '2%',
-    paddingRight: '2%'
+    padding: 10,
+    justifyContent: 'space-evenly'
   },
   selectedCard: {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%'
+  },
+  title: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    margin: 20
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold'
   }
 });

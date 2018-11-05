@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, Modal} from 'react-native';
+import {StyleSheet, View, ScrollView, Modal, Text} from 'react-native';
 import Card from './Card';
 
 export default class CardListModal extends React.Component {
@@ -24,7 +24,10 @@ export default class CardListModal extends React.Component {
             contentContainerStyle={styles.container}
             style={{ height: '100%', width: '100%'}}
           >
-            <View style={[styles.container]}>
+            <View style={styles.title}>
+              <Text style={styles.titleText}>Select a card:</Text>
+            </View>
+            <View style={styles.container}>
               {allCards}
             </View>
           </ScrollView>
@@ -41,7 +44,17 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingLeft: '2%',
-    paddingRight: '2%'
+    padding: 10,
+    justifyContent: 'space-evenly'
+  },
+  title: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    margin: 20
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold'
   }
 });

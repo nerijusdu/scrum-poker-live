@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import * as appActions from '../store/actions/AppActions';
+import showIf from '../helpers/showIf';
 
 const authRoutes = [
   'Rooms'
@@ -23,10 +24,11 @@ class DrawerContainer extends React.Component {
           const hidden = hiddenRoutes.includes(route.key);
           let shouldDisplay = route.key === 'Login' ? !isLoggedIn : !requiresLogin || isLoggedIn;
           shouldDisplay = hidden ? false : shouldDisplay;
+
           return (
             <Text
               onPress={() => navigation.navigate(route.key)}
-              style={[styles.uglyDrawerItem, { display: shouldDisplay ? 'flex': 'none'}]}
+              style={[styles.uglyDrawerItem, showIf(shouldDisplay)]}
               key={route.key}>
               {route.routeName}
             </Text>
@@ -38,7 +40,8 @@ class DrawerContainer extends React.Component {
             saveUser(null, '');
             navigation.navigate('Login');
           }}
-          style={[styles.uglyDrawerItem, { display: !isLoggedIn ? 'none': 'flex'}]}>
+          style={[styles.uglyDrawerItem, showIf(isLoggedIn)]}
+        >
           Logout
         </Text>
       </View>

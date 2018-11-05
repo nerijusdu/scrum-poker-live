@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Modal} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
+import showIf from '../helpers/showIf';
 
 class RoomList extends React.Component {
   constructor(props){
@@ -82,7 +83,7 @@ const RoomItem = (props) => (
   <TouchableNativeFeedback onPress={props.onPress}>
     <View style={styles.roomItem}>
       <Text style={styles.roomTitle}>{props.name}</Text>
-      <Text style={{ display: props.locked ? 'flex' : 'none' }}>Icon</Text>
+      <Text style={showIf(props.locked)}>Icon</Text>
     </View>
   </TouchableNativeFeedback>
 );
