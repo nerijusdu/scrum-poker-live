@@ -1,7 +1,8 @@
 import { AsyncStorage } from 'react-native';
 import { apiUrl } from '../config';
 import store from '../store';
-import { saveUser, toggleLoading } from '../store/actions/AppActions';
+import { saveUser, toggleLoading, showMessage } from '../store/actions/AppActions';
+import { MessageType } from '../constants';
 
 export class ApiCall {
   defaultHeaders = new Headers({
@@ -29,9 +30,8 @@ export class ApiCall {
       })
       .then(this.parseResponse)
       .then(this.handleErrors)
-      .catch((err) => {
-        // this.store.dispatch('app/showError', 'Something went wrong!');
-        console.error(err);
+      .catch(() => {
+        store.dispatch(showMessage('Something went wrong!', MessageType.Error));
         return null;
       })
       .finally(res => {
@@ -63,8 +63,8 @@ export class ApiCall {
         AsyncStorage.removeItem("UserToken");
         store.dispatch(saveUser(null, ''));
       }
-      // this.store.dispatch('app/showError', res.data.message);
-      console.warn(res);
+      
+      store.dispatch(showMessage(res.data.message, MessageType.Error));
       return null;
     }
     return res;

@@ -1,9 +1,14 @@
+import { MessageType } from "../../constants";
+
 const initialState = {
   user: {
     token: null,
     name: ''
   },
-  error: '',
+  message: {
+    type: MessageType.Success,
+    text: ''
+  },
   loading: true
 };
 
@@ -17,10 +22,13 @@ const app = (state = initialState, action) => {
           name: action.name
         }
       };
-    case 'SHOW_ERROR':
+    case 'SHOW_MESSAGE':
       return {
         ...state,
-        error: action.error
+        message: {
+          type: action.messageType || MessageType.Success,
+          text: action.text || null
+        }
       };
     case 'TOGGLE_LOADING':
       return {

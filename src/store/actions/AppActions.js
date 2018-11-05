@@ -1,6 +1,7 @@
-export const showError = (error) => ({
-  type: 'SHOW_ERROR',
-  error
+export const showMessage = (text, messageType) => ({
+  type: 'SHOW_MESSAGE',
+  text,
+  messageType
 });
 
 export const saveUser = (token, name) => ({
