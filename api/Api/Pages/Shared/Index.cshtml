@@ -28,7 +28,7 @@
     }
 
     function subscribe() {
-        var roomId = document.querySelector("#token").value;
+        var roomId = document.querySelector("#roomId").value;
         connection
             .invoke("Subscribe", parseInt(roomId), "pass")
             .catch(function (err) {
