@@ -4,6 +4,7 @@ import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Mod
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
 import showIf from '../helpers/showIf';
+import roomApiService from '../services/roomApiService';
 
 class RoomList extends React.Component {
   constructor(props){
@@ -35,12 +36,18 @@ class RoomList extends React.Component {
 
   componentWillUpdate(nextProps) {
     if (!this.state.isLoaded && !this.props.user.token && nextProps.user.token) {
-      // this.loadRooms();
+      this.loadRooms();
     }
   }
 
   enterRoom = (id, pass) => {
-    this.props.navigation.navigate('Room', this.state.rooms.find(x => x.id === id));
+    roomApiService()
+      .createConnection(id, pass)
+      .then(conn => {
+        if (conn) {
+          this.props.navigation.navigate('Room', this.state.rooms.find(x => x.id === id));
+        }
+      })
   }
 
   render() {
@@ -149,7 +156,6 @@ class CreateRoomModal extends React.Component {
     );
   }
 }
-
 
 class EnterRoomModal extends React.Component {
   constructor(props) {

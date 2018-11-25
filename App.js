@@ -10,6 +10,7 @@ import DrawerContainer from './src/components/DrawerContainer';
 import { saveUser, toggleLoading } from './src/store/actions/AppActions';
 import Room from './src/components/Room';
 import Message from './src/components/Message';
+import {init as roomServiceInit} from './src/services/roomApiService';
 
 AsyncStorage.getItem("UserToken")
   .then(token => {
@@ -18,6 +19,8 @@ AsyncStorage.getItem("UserToken")
     }
   })
   .finally(() => store.dispatch(toggleLoading(false)));
+
+roomServiceInit();
 
 const App = createDrawerNavigator({
   Home: CardList,

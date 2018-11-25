@@ -3,7 +3,6 @@
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
-    var roomId = 2;
     var connection;
     function connect() {
         var token = document.querySelector("#token").value;
@@ -18,7 +17,7 @@
         connection.on("UpdateUserList", (users) => {
             console.log(users);
         });
-        
+
         connection.on("Disconnect", () => {
             connection.stop();
         });
@@ -27,11 +26,12 @@
             return console.log(err.toString());
         });
     }
-    
+
     function subscribe() {
+        var roomId = document.querySelector("#token").value;
         connection
-            .invoke("Subscribe", roomId, "pass")
-            .catch(function(err) {
+            .invoke("Subscribe", parseInt(roomId), "pass")
+            .catch(function (err) {
                 return console.log(err.toString());
             });
     }
@@ -48,7 +48,8 @@
 </script>
 
 <span>Token:</span>
-<input id="token" value=""/>
-<button onclick="connect()">Connect</button><br/>
+<input id="token" value="" />
+<button onclick="connect()">Connect</button><br />
+<input id="roomId" value="" /><br/>
 <button onclick="subscribe()">Subscribe</button><br />
 <button onclick="unsubscribe()">Unsubscribe</button>

@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, Button, StyleSheet } from 'react-native';
 import CardListModal from './CardListModal';
 import showIf from '../helpers/showIf';
+import roomApiService from '../services/roomApiService';
 
 class Room extends React.Component {
   constructor(props) {
@@ -11,8 +12,23 @@ class Room extends React.Component {
       showEstimates: false,
       myEstimate: null,
       isModalOpen: false,
-      isMaster: true
+      isMaster: true,
+      users: roomApiService().userList.map(x => ({id: x.id, name: x.name, estimate: null}))
     };
+
+    roomApiService().registerUpdateFunctions(
+      () => this.setState(),
+      estimates => {
+        this.setState({ users:  this.state.users.map(x => {
+          const item = estimates.find(y => x.id === y.userId);
+          if (item) {
+            x.estimate = item.estimate;
+          }
+          
+          return x;
+        })});
+      }
+    );
   }
 
   showEstimates = () => {
@@ -23,6 +39,11 @@ class Room extends React.Component {
     this.setState({ showEstimates: false, myEstimate: null });
   }
 
+  chooseEstimate = (myEstimate) => {
+    this.setState({ myEstimate, isModalOpen: false });
+    roomApiService().chooseEstimate(myEstimate);
+  }
+
   leaveRoom = () => {
     this.props.navigation.navigate("Rooms");
   }
@@ -31,30 +52,14 @@ class Room extends React.Component {
     const { params } = this.props.navigation.state;
     const room = {
       name: params.name,
-      users: [
-        {
-          id: 1,
-          username: 'User 1',
-          estimate: 5
-        },
-        {
-          id: 2,
-          username: 'User 2',
-          estimate: 3
-        },
-        {
-          id: 3,
-          username: 'User without estimate',
-          estimate: null
-        }
-      ]
+      users: this.state.users
     };
     return (
       <View style={style.container}>
         <CardListModal
           isOpen={this.state.isModalOpen}
           onRequestClose={() => this.setState({ isModalOpen: false })}
-          onSelectCard={myEstimate => this.setState({ myEstimate, isModalOpen: false })}
+          onSelectCard={this.chooseEstimate}
         />
         <View style={style.title}>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{room.name}</Text>
@@ -83,7 +88,7 @@ class Room extends React.Component {
           {
             room.users.map(u => 
               <View style={style.user} key={u.id}>
-                <Text>{u.username}</Text>
+                <Text>{u.name}</Text>
                 <View style={[style.card, showIf(u.estimate !== null)]}>
                   <Text style={style.cardText}>{this.state.showEstimates ? u.estimate : null}</Text>
                 </View>
