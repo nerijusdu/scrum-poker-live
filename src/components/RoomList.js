@@ -1,8 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Modal, RefreshControl} from 'react-native';
-import {TextField} from 'react-native-material-textfield';
+import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, RefreshControl} from 'react-native';
+import CreateRoomModal from './CreateRoomModal';
+import EnterRoomModal from './EnterRoomModal';
 import apiService from '../services/apiService';
 import showIf from '../helpers/showIf';
 import roomApiService from '../services/roomApiService';
@@ -15,7 +16,7 @@ class RoomList extends React.Component {
     
     this.state = {
       isLoaded: false,
-      rooms: [{ id: 1, name: 'Test room'}],
+      rooms: [],
       isCreateModalOpen: false,
       isPasswordModalOpen: false,
       selectedRoomId: null,
@@ -109,118 +110,6 @@ const RoomItem = (props) => (
   </TouchableNativeFeedback>
 );
 
-class CreateRoomModal extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      touched: false,
-      name: '',
-      password: ''
-    };
-  }
-
-  createRoom = () => {
-    if (!this.state.name) {
-      this.setState({ touched: true })
-      return;
-    }
-
-    apiService.createRoom({
-      Name: this.state.name,
-      Password: this.state.password || null
-    })
-      .then(() => this.props.onRequestClose());
-  }
-
-  render() {
-    return (
-      <View>
-        <Modal
-          animationType="slide"
-          visible={this.props.isOpen}
-          onRequestClose={this.props.onRequestClose}
-        >
-          <View style={styles.modal}>
-            <TextField
-              label="Name"
-              returnKeyType="next"
-              onSubmitEditing={() => this.passwordInput.focus()}
-              blurOnSubmit={false}
-              value={this.state.name}
-              onChangeText={name => this.setState({ name })}
-              error={!this.state.touched || this.state.name ? null : 'Name is required'}
-            />
-            <TextField
-              label="Password (optional)"
-              ref={input => { this.passwordInput = input; }}
-              value={this.state.password}
-              onChangeText={password => this.setState({ password })}
-              onSubmitEditing={this.createRoom}
-              secureTextEntry
-            />
-            <View style={styles.createRoomButton}>
-              <Button
-              title="Create room"
-              onPress={this.createRoom}
-              />
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  }
-}
-
-class EnterRoomModal extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      touched: false,
-      password: ''
-    };
-  }
-
-  enterRoom = () => {
-    if (!this.state.password) {
-      this.setState({ touched: true })
-      return;
-    }
-    this.props.onSubmit(this.props.selectedRoomId, this.state.password);
-    this.props.onRequestClose();
-  }
-
-  render() {
-    return (
-      <View>
-        <Modal
-          animationType="slide"
-          visible={this.props.isOpen}
-          onRequestClose={this.props.onRequestClose}
-        >
-          <View style={styles.modal}>
-            <TextField
-              label="Password"
-              value={this.state.password}
-              onChangeText={password => this.setState({ password })}
-              error={!this.state.touched || this.state.password ? null : 'Password is required'}
-              onSubmitEditing={this.enterRoom}
-              secureTextEntry
-            />
-            <View style={styles.createRoomButton}>
-              <Button
-              title="Enter room"
-              onPress={this.enterRoom}
-              />
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -246,14 +135,6 @@ const styles = StyleSheet.create({
   },
   roomTitle: {
     fontSize: 16
-  },
-  modal: {
-    width: '100%',
-    height: '100%',
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
   }
 });
 
