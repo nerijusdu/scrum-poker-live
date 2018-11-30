@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { AsyncStorage, View } from 'react-native';
 import CardList from './src/components/CardList';
 import Login from './src/components/Login';
+import Register from './src/components/Register';
 import RoomList from './src/components/RoomList';
 import store from './src/store';
 import DrawerContainer from './src/components/DrawerContainer';
@@ -25,6 +26,7 @@ roomServiceInit();
 const App = createDrawerNavigator({
   Home: CardList,
   Login,
+  Register,
   Rooms: {
     screen: RoomList
   },

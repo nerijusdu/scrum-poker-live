@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  error: state.app.error,
   user: state.app.user
 });
 

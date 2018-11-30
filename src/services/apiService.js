@@ -7,6 +7,12 @@ export default {
       body: JSON.stringify(user)
     });
   },
+  register(user) {
+    return apiCall('/users/register', {
+      method: 'POST',
+      body: JSON.stringify(user)
+    });
+  },
   getRooms() {
     return apiCall('/rooms');
   },

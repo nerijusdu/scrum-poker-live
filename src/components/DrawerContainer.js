@@ -8,6 +8,10 @@ import showIf from '../helpers/showIf';
 const authRoutes = [
   'Rooms'
 ];
+const unAuthRoutes = [
+  'Login',
+  'Register'
+];
 const hiddenRoutes = [
   'Room'
 ];
@@ -21,8 +25,10 @@ class DrawerContainer extends React.Component {
       <View style={styles.container}>
         {navigation.state.routes.map(route => {
           const requiresLogin = authRoutes.includes(route.key);
+          const requiresNoLogin = unAuthRoutes.includes(route.key);
           const hidden = hiddenRoutes.includes(route.key);
-          let shouldDisplay = route.key === 'Login' ? !isLoggedIn : !requiresLogin || isLoggedIn;
+          
+          let shouldDisplay =  requiresNoLogin ? !isLoggedIn : !requiresLogin || isLoggedIn;
           shouldDisplay = hidden ? false : shouldDisplay;
 
           return (

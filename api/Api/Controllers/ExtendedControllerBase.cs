@@ -4,6 +4,8 @@ namespace Api.Controllers
 {
     public class ExtendedControllerBase : ControllerBase
     {
-        public int UserId => int.Parse(User?.Identity?.Name);
+        protected int UserId => int.Parse(User?.Identity?.Name);
+
+        protected IActionResult EmptyOk() => Ok(new EmptyResult());
     }
 }

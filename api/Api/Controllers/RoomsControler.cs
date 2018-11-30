@@ -60,7 +60,7 @@ namespace Api.Controllers
             }
 
             _roomService.DeleteRoom(id);
-            return Ok();
+            return EmptyOk();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Api.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : ExtendedControllerBase
     {
         private readonly IUserService _userService;
         private readonly AppSettings _appSettings;
@@ -80,7 +80,7 @@ namespace Api.Controllers
             try
             {
                 _userService.Create(user, userDto.Password);
-                return Ok();
+                return EmptyOk();
             }
             catch (Exception ex)
             {
@@ -101,7 +101,7 @@ namespace Api.Controllers
             try
             {
                 _userService.Update(user, userDto.Password);
-                return Ok();
+                return EmptyOk();
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace Api.Controllers
         public IActionResult Delete(int id)
         {
             _userService.Delete(id);
-            return Ok();
+            return EmptyOk();
         }
     }
 }
