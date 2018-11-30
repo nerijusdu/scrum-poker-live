@@ -57,6 +57,7 @@ class Login extends React.Component {
           label="Password"
           value={this.state.password}
           onChangeText={password => this.setState({ password })}
+          onSubmitEditing={this.login}
           secureTextEntry
         />
         <View style={{ paddingTop: 20 }}>

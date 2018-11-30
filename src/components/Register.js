@@ -110,6 +110,7 @@ class Register extends React.Component {
           value={this.state.repeatPassword}
           error={this.state.repeatPasswordError}
           onChangeText={repeatPassword => this.setState({ repeatPassword })}
+          onSubmitEditing={this.register}
           secureTextEntry
         />
         <View style={{ paddingTop: 20 }}>

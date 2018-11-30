@@ -156,6 +156,7 @@ class CreateRoomModal extends React.Component {
               ref={input => { this.passwordInput = input; }}
               value={this.state.password}
               onChangeText={password => this.setState({ password })}
+              onSubmitEditing={this.createRoom}
               secureTextEntry
             />
             <View style={styles.createRoomButton}>
@@ -204,6 +205,7 @@ class EnterRoomModal extends React.Component {
               value={this.state.password}
               onChangeText={password => this.setState({ password })}
               error={!this.state.touched || this.state.password ? null : 'Password is required'}
+              onSubmitEditing={this.enterRoom}
               secureTextEntry
             />
             <View style={styles.createRoomButton}>
