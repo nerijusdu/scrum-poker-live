@@ -12,6 +12,7 @@ class Room extends React.Component {
   constructor(props) {
     super(props);
 
+    this.gracefullyClose = false;
     this.state = {
       showEstimates: false,
       isModalOpen: false,
@@ -45,7 +46,9 @@ class Room extends React.Component {
         })
       },
       () => {
-        this.props.showMessage("Room was closed", MessageType.Error);
+        if (!this.gracefullyClose) {
+          this.props.showMessage("Room was closed", MessageType.Error);
+        }
         this.props.navigation.navigate("Rooms");
       }
     );
@@ -57,11 +60,9 @@ class Room extends React.Component {
   }
 
   leaveRoom = () => {
-    roomApiService()
-      .closeConnection()
-      .then(() => {
-        this.props.navigation.navigate("Rooms");
-      });
+    this.gracefullyClose = true;
+
+    roomApiService().closeConnection();
   }
 
   render() {
@@ -113,7 +114,7 @@ class Room extends React.Component {
           }
         </ScrollView>
         <Button
-          title={this.state.isMaster ? "Delete room" : "Leave room"}
+          title={this.state.isMaster ? "Close room" : "Leave room"}
           color="#d50000"
           onPress={this.leaveRoom}
         />

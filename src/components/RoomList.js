@@ -31,12 +31,12 @@ class RoomList extends React.Component {
   }
 
   loadRooms = () => {
-    apiService.getRooms()
-    .then(res => {
-      if (res) {
-        this.setState({ rooms: res.data, isLoaded: true });
-      }
-    });
+    return apiService.getRooms()
+      .then(res => {
+        if (res) {
+          this.setState({ rooms: res.data, isLoaded: true });
+        }
+      });
   }
 
   componentWillUpdate(nextProps) {
@@ -70,9 +70,11 @@ class RoomList extends React.Component {
       >
         <CreateRoomModal
           isOpen={this.state.isCreateModalOpen}
-          onRequestClose={() => {
+          onRequestClose={(response, pass) => {
             this.setState({ isCreateModalOpen: false });
-            this.loadRooms();
+            if (response) {
+              this.loadRooms().then(() => this.enterRoom(response.data.id, pass));
+            }
           }}
         />
         <EnterRoomModal

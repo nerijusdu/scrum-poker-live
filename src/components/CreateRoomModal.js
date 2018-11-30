@@ -20,11 +20,12 @@ class CreateRoomModal extends React.Component {
       return;
     }
 
-    apiService.createRoom({
-      Name: this.state.name,
-      Password: this.state.password || null
-    })
-      .then(() => this.props.onRequestClose());
+    apiService
+      .createRoom({
+        Name: this.state.name,
+        Password: this.state.password || null
+      })
+      .then(res => this.props.onRequestClose(res, this.state.password));
   }
 
   render() {

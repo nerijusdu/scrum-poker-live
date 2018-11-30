@@ -41,16 +41,16 @@ const style = StyleSheet.create({
   container: {
     display: 'flex',
     position: 'absolute',
-    top: 20,
-    left: 20,
-    right: 20,
+    top: 5,
+    left: 10,
+    right: 10,
   },
   innerContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 50,
-    borderRadius: 5
+    borderRadius: 2
   },
   text: {
     color: 'white',
