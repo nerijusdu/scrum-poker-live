@@ -46,6 +46,7 @@ namespace Api.Hubs
 
             var estimates = roomService.GetEstimates(roomId, true);
             Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
+
             return Task.CompletedTask;
         }
 
@@ -77,6 +78,19 @@ namespace Api.Hubs
             }
 
             var estimates = roomService.GetEstimates(roomId);
+            Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
+            return Task.CompletedTask;
+        }
+
+        public Task ClearEstimates(int roomId)
+        {
+            var room = roomService.GetById(roomId);
+            if (room.Master.Id != UserId)
+            {
+                return Task.CompletedTask;
+            }
+
+            var estimates = roomService.ClearEstimates(roomId);
             Clients.Group(roomId.ToString()).UpdateEstimates(estimates);
             return Task.CompletedTask;
         }

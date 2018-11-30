@@ -1,8 +1,12 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import { ScrollView, View, Text, Button, StyleSheet } from 'react-native';
 import CardListModal from './CardListModal';
 import showIf from '../helpers/showIf';
 import roomApiService from '../services/roomApiService';
+import * as appActions from '../store/actions/AppActions';
+import { MessageType } from '../constants';
 
 class Room extends React.Component {
   constructor(props) {
@@ -10,42 +14,54 @@ class Room extends React.Component {
 
     this.state = {
       showEstimates: false,
-      myEstimate: null,
       isModalOpen: false,
       isMaster: true,
       users: roomApiService().userList.map(x => ({id: x.id, name: x.name, estimate: null}))
     };
 
+    const userMap = x => {
+      const user = this.state.users.find(y => y.id === x.id);
+      const estimate = user ? user.estimate : null;
+
+      return {id: x.id, name: x.name, estimate: estimate};
+    };
+
+    const estimateMap = estimates => x => {
+      const item = estimates.find(y => x.id === y.userId);
+      if (item) {
+        x.estimate = item.estimate;
+      }
+      
+      return x;
+    };
+
     roomApiService().registerUpdateFunctions(
-      () => this.setState(),
+      users => this.setState({ users: users.map(userMap)}),
       estimates => {
-        this.setState({ users:  this.state.users.map(x => {
-          const item = estimates.find(y => x.id === y.userId);
-          if (item) {
-            x.estimate = item.estimate;
-          }
-          
-          return x;
-        })});
+        const showEstimates = !!estimates.find(x => x.estimate !== null || x.estimate !== "");
+        this.setState({
+          users: this.state.users.map(estimateMap(estimates)),
+          showEstimates
+        })
+      },
+      () => {
+        this.props.showMessage("Room was closed", MessageType.Error);
+        this.props.navigation.navigate("Rooms");
       }
     );
   }
 
-  showEstimates = () => {
-    this.setState({ showEstimates: true });
-  }
-
-  clearEstimates = () => {
-    this.setState({ showEstimates: false, myEstimate: null });
-  }
-
   chooseEstimate = (myEstimate) => {
-    this.setState({ myEstimate, isModalOpen: false });
+    this.setState({ isModalOpen: false });
     roomApiService().chooseEstimate(myEstimate);
   }
 
   leaveRoom = () => {
-    this.props.navigation.navigate("Rooms");
+    roomApiService()
+      .closeConnection()
+      .then(() => {
+        this.props.navigation.navigate("Rooms");
+      });
   }
 
   render() {
@@ -69,14 +85,14 @@ class Room extends React.Component {
             <Button
               title="Clear estimates"
               color="#d50000"
-              onPress={this.clearEstimates}
+              onPress={() => roomApiService().clearEstimates()}
             />
           </View>
           <View style={style.controlButton}>
             <Button
               title="Show estimates"
-              onPress={this.showEstimates}
-              // disabled={room.users.findIndex(x => x.estimate === null) >= 0}
+              onPress={() => roomApiService().showEstimates()}
+              disabled={!!room.users.find(x => x.estimate === null)}
             />
           </View>
         </View>
@@ -156,4 +172,6 @@ const style = StyleSheet.create({
   }
 });
 
-export default Room;
+const mapDispatchToProps = (dispatch) => bindActionCreators(appActions, dispatch);
+
+export default connect(null, mapDispatchToProps)(Room);

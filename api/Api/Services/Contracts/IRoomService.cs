@@ -14,5 +14,6 @@ namespace Api.Services.Contracts
         bool ContainsUser(int roomId, int userId);
         List<EstimateDto> GetEstimates(int roomId, bool hidden = false);
         List<EstimateDto> ChangeEstimate(int roomId, int userId, string estimate);
+        List<EstimateDto> ClearEstimates(int roomId);
     }
 }

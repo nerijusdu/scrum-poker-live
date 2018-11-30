@@ -14,33 +14,44 @@ class RoomApiService {
     this.userList = [];
     this.updateUsers = empty;
     this.updateEstimates = empty;
+    this.onDisconnect = empty;
   }
 
-  registerUpdateFunctions(updateUsers, updateEstimates) {
+  registerUpdateFunctions(updateUsers, updateEstimates, onDisconnect) {
     this.updateUsers = updateUsers || empty;
     this.updateEstimates = updateEstimates || empty;
+    this.onDisconnect = onDisconnect || empty;
   }
 
-  createConnection(id, pass) {
+  createConnection(id, pass, onConnected) {
     const token = this.store.getState().app.user.token;
     if (!token) {
       this.store.dispatch(showMessage("Please login!", MessageType.Error));
       return null;
     }
+    
     this.roomId = id;
     this.connection = new HubConnectionBuilder()
       .withUrl(`${apiUrl}/hubs/rooms`, {accessTokenFactory: () => token})
       .build();
 
-    this.registerMethods();
+    this.registerMethods(onConnected || empty);
 
     return this.connection
       .start()
+      .then(() => this.connection.invoke('Subscribe', id, pass))
+      .catch(err => {
+        console.warn(err);
+      });
+  }
+  
+  closeConnection() {
+    return this.connection
+      .invoke('Unsubscribe', this.roomId)
+      .then(() => this.connection.stop())
       .then(() => {
-        console.warn('Connected to hub');
-        return this.connection.invoke('Subscribe', id, pass);
+        this.connection = null;
       })
-      .then(() => this.connection)
       .catch(err => {
         console.warn(err);
       });
@@ -50,8 +61,6 @@ class RoomApiService {
     return this.connection;
   }
 
-  getUpdateEstimates = () => this.updateEstimates;
-
   chooseEstimate(estimate) {
     return this.connection
       .invoke('AddEstimate', this.roomId, estimate.toString())
@@ -60,9 +69,25 @@ class RoomApiService {
       });
   }
 
-  registerMethods() {
+  showEstimates() {
+    return this.connection
+      .invoke('ShowEstimates', this.roomId)
+      .catch(err => {
+        console.warn(err);
+      });
+  }
+
+  clearEstimates() {
+    return this.connection
+      .invoke('ClearEstimates', this.roomId)
+      .catch(err => {
+        console.warn(err);
+      });
+  }
+
+  registerMethods(onConnected) {
     this.connection.on("OnConnected", (success, message) => {
-      console.warn(success, message);
+      onConnected({success, message});
     });
 
     this.connection.on("UpdateEstimates", (estimates) => {
@@ -70,13 +95,14 @@ class RoomApiService {
     });
 
     this.connection.on("UpdateUserList", (users) => {
-      console.warn(users);
       this.userList = users;
-      this.updateUsers();
+      this.updateUsers(users);
     });
     
     this.connection.on("Disconnect", () => {
-      this.connection.stop(); // TODO: notify about disconnection
+      this.connection
+        .stop()
+        .then(this.onDisconnect);
     });
   }
 }

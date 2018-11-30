@@ -15,7 +15,11 @@
         });
 
         connection.on("UpdateUserList", (users) => {
-            console.log(users);
+            console.log('users', users);
+        });
+
+        connection.on("UpdateEstimates", (estimates) => {
+            console.log('estimates', estimates);
         });
 
         connection.on("Disconnect", () => {
@@ -29,15 +33,17 @@
 
     function subscribe() {
         var roomId = document.querySelector("#roomId").value;
+        var password = document.querySelector("#password").value;
         connection
-            .invoke("Subscribe", parseInt(roomId), "pass")
+            .invoke("Subscribe", parseInt(roomId), password)
             .catch(function (err) {
                 return console.log(err.toString());
             });
     }
     function unsubscribe() {
+        var roomId = document.querySelector("#roomId").value;
         connection
-            .invoke("Unsubscribe", roomId)
+            .invoke("Unsubscribe", parseInt(roomId))
             .then(() => {
                 connection.stop();
             })
@@ -45,11 +51,43 @@
                 return console.log(err.toString());
             });
     }
+    function addEstimate() {
+        var roomId = document.querySelector("#roomId").value;
+        var estimate = document.querySelector("#estimate").value;
+        connection
+            .invoke("AddEstimate", parseInt(roomId), estimate)
+            .catch((err) => {
+                return console.log(err.toString());
+            });
+    }
+    function showEstimates() {
+        var roomId = document.querySelector("#roomId").value;
+        connection
+            .invoke("ShowEstimates", parseInt(roomId))
+            .catch((err) => {
+                return console.log(err.toString());
+            });
+    }
+    function showEstimates() {
+        var roomId = document.querySelector("#roomId").value;
+        connection
+            .invoke("ClearEstimates", parseInt(roomId))
+            .catch((err) => {
+                return console.log(err.toString());
+            });
+    }
 </script>
 
-<span>Token:</span>
-<input id="token" value="" />
+<span>Token:</span><input id="token" value="" />
 <button onclick="connect()">Connect</button><br />
-<input id="roomId" value="" /><br/>
-<button onclick="subscribe()">Subscribe</button><br />
-<button onclick="unsubscribe()">Unsubscribe</button>
+                                            <br />
+<span>RoomId:</span><input id="roomId" value="" /><br />
+<span>Room pass:</span><input id="password" value="pass" /><br />
+                                                           <br />
+<button onclick="subscribe()">Subscribe</button>
+<button onclick="unsubscribe()">Unsubscribe</button><br />
+                                                    <br />
+<span>Estimate:</span><input id="estimate" value="" /><br />
+<button onclick="addEstimate()">Change estimate</button><br />
+<button onclick="showEstimates()">Show estimates</button><br />
+<button onclick="clearEstimates()">Clear estimates</button><br />

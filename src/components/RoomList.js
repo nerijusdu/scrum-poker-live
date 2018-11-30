@@ -1,10 +1,13 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Modal} from 'react-native';
+import {bindActionCreators} from 'redux';
+import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, Modal, RefreshControl} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import apiService from '../services/apiService';
 import showIf from '../helpers/showIf';
 import roomApiService from '../services/roomApiService';
+import * as appActions from '../store/actions/AppActions';
+import { MessageType } from '../constants';
 
 class RoomList extends React.Component {
   constructor(props){
@@ -15,7 +18,8 @@ class RoomList extends React.Component {
       rooms: [{ id: 1, name: 'Test room'}],
       isCreateModalOpen: false,
       isPasswordModalOpen: false,
-      selectedRoomId: null
+      selectedRoomId: null,
+      refreshing: false
     };
 
     if (!props.user.token) {
@@ -41,18 +45,28 @@ class RoomList extends React.Component {
   }
 
   enterRoom = (id, pass) => {
-    roomApiService()
-      .createConnection(id, pass)
-      .then(conn => {
-        if (conn) {
-          this.props.navigation.navigate('Room', this.state.rooms.find(x => x.id === id));
-        }
-      })
+    const onConnected = (result) => {
+      if (result.success) {
+        this.props.navigation.navigate('Room', this.state.rooms.find(x => x.id === id));
+      } else {
+        this.props.showMessage(result.message || "Something went wrong", MessageType.Error);
+      }
+    };
+
+    roomApiService().createConnection(id, pass, onConnected);
   }
 
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.loadRooms}
+          />
+        }
+      >
         <CreateRoomModal
           isOpen={this.state.isCreateModalOpen}
           onRequestClose={() => {
@@ -245,4 +259,6 @@ const mapStateToProps = (state) => ({
   user: state.app.user
 });
 
-export default connect(mapStateToProps)(RoomList);
+const mapDispatchToProps = (dispatch) => bindActionCreators(appActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoomList);

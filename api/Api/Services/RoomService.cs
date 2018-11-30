@@ -119,6 +119,7 @@ namespace Api.Services
 
                 user.Rooms.Remove(roomUser);
             }
+            _context.SaveChanges();
 
             // remove room if master left
             var roomsToRemove = _context.Rooms
@@ -149,7 +150,9 @@ namespace Api.Services
                 .Select(x => new EstimateDto
                 {
                     UserId = x.UserId,
-                    Estimate = hidden ? x.Estimate : null
+                    Estimate = !hidden
+                        ? x.Estimate 
+                        : string.IsNullOrEmpty(x.Estimate) ? null : ""
                 })
                 .ToList();
         }
@@ -171,6 +174,24 @@ namespace Api.Services
             _context.SaveChanges();
 
             return GetEstimates(roomId, true);
+        }
+
+        public List<EstimateDto> ClearEstimates(int roomId)
+        {
+            var roomUsers = _context.Rooms
+                .Include(x => x.Users)
+                .FirstOrDefault(x => x.Id == roomId)?
+                .Users;
+
+            if (roomUsers == null)
+            {
+                return null;
+            }
+
+            roomUsers.ForEach(x => x.Estimate = null);
+            _context.SaveChanges();
+
+            return GetEstimates(roomId);
         }
     }
 }
