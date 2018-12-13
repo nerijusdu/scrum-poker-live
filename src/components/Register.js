@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: '30%',
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'white'
   }
 });
 

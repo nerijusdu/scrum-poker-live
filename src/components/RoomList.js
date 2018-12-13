@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     paddingTop: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+    backgroundColor: 'white'
   },
   createRoomButton: {
     position: 'absolute',

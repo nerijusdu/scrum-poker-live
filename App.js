@@ -1,7 +1,7 @@
 import React from 'react';
 import { createDrawerNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
-import { AsyncStorage, View } from 'react-native';
+import { AsyncStorage, View, StatusBar } from 'react-native';
 import CardList from './src/components/CardList';
 import Login from './src/components/Login';
 import Register from './src/components/Register';
@@ -36,6 +36,10 @@ const App = createDrawerNavigator({
 export default () => (
   <Provider store={store}>
     <View style={{width: '100%', height: '100%'}}>
+      <StatusBar
+        backgroundColor="white"
+        barStyle="dark-content"
+      />
       <App/>
       <Message/>
     </View>

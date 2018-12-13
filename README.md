@@ -19,7 +19,5 @@ $ adb devices
 $ adb reverse tcp:8080 tcp:8080
 $ npm start
 ```
-Open Chrome -> Dev tools -> Options -> More tools -> Remote devices
-Check 'Port forwarding' with options 8080 and localhost:8080
 ### Troubleshooting
 If app can't connect to api try changing `apiUrl` in `src/config.js` to your local ip address for example `http://192.168.0.12:8080`.

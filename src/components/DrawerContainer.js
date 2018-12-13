@@ -60,7 +60,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     paddingLeft: 10,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    backgroundColor: 'white'
   },
   uglyDrawerItem: {
     fontSize: 16,

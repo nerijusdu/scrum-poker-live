@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 10,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    backgroundColor: 'white'
   },
   selectedCard: {
     alignItems: 'center',

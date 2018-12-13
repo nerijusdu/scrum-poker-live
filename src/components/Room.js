@@ -128,7 +128,8 @@ const style = StyleSheet.create({
     display: 'flex',
     width: '100%',
     height: '100%',
-    padding: 10
+    padding: 10,
+    backgroundColor: 'white'
   },
   title: {
     display: 'flex',
