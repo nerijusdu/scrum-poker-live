@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, RefreshControl} from 'react-native';
+import {ScrollView, View, Text, StyleSheet, TouchableNativeFeedback, Button, RefreshControl, Image} from 'react-native';
 import CreateRoomModal from './CreateRoomModal';
 import EnterRoomModal from './EnterRoomModal';
 import apiService from '../services/apiService';
@@ -9,6 +9,7 @@ import showIf from '../helpers/showIf';
 import roomApiService from '../services/roomApiService';
 import * as appActions from '../store/actions/AppActions';
 import { MessageType } from '../constants';
+import lockIcon from '../assets/lock.png';
 
 class RoomList extends React.Component {
   constructor(props){
@@ -107,7 +108,7 @@ const RoomItem = (props) => (
   <TouchableNativeFeedback onPress={props.onPress}>
     <View style={styles.roomItem}>
       <Text style={styles.roomTitle}>{props.name}</Text>
-      <Text style={showIf(props.locked)}>Icon</Text>
+      <Image style={[styles.lockIcon, showIf(props.locked)]} source={lockIcon}/>
     </View>
   </TouchableNativeFeedback>
 );
@@ -138,6 +139,11 @@ const styles = StyleSheet.create({
   },
   roomTitle: {
     fontSize: 16
+  },
+  lockIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 5
   }
 });
 
