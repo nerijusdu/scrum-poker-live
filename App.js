@@ -35,7 +35,7 @@ const App = createDrawerNavigator({
 
 export default () => (
   <Provider store={store}>
-    <View style={{width: '100%', height: '100%'}}>
+    <View style={{width: '100%', height: '100%', backgroundColor: '#ffffff'}}>
       <StatusBar
         backgroundColor="white"
         barStyle="dark-content"
