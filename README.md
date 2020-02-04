@@ -1,3 +1,10 @@
+## About
+Small side project made while learning:
+- React Native
+- .Net Core
+- SignalR
+- Docker
+
 ## Running localy
 ### Prerequisites
 - Setup [React-Native](https://facebook.github.io/react-native/docs/getting-started.html)
